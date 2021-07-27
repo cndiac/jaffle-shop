@@ -4,4 +4,4 @@ select
     order_date,
     status
 
-from raw.jaffle_shop.orders
+from DBT_SANDBOX.jaffle_shop.orders

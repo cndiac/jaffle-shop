@@ -6,4 +6,4 @@ select
   amount/100 as amount,
   _batched_at as batched_at   
 
-from raw.stripe.payment
+from DBT_SANDBOX.stripe.payment
