@@ -4,4 +4,4 @@ select
     order_date,
     status
 
-from DBT_SANDBOX.jaffle_shop.orders
+from {{ source('jaffle_shop', 'orders') }}

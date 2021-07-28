@@ -6,4 +6,4 @@ select
   amount/100 as amount,
   _batched_at as batched_at   
 
-from DBT_SANDBOX.stripe.payment
+from {{ source('stripe', 'payment') }}
