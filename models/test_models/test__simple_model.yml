@@ -1,0 +1,13 @@
+version: 2
+
+models:
+  - name: &model_name test__simple_model
+    config:
+      tags:
+        - *model_name
+    columns:
+      - name: origin_system
+        tags: [origin_system]
+        data_tests:
+          - is_present:
+              artifact_section: current

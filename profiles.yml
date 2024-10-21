@@ -1,0 +1,30 @@
+flags:
+  send_anonymous_usage_stats: false
+default:
+  target: "{{ env_var('SNOWFLAKE_ENV', 'local') }}"
+  outputs:
+    common: &common
+      account: "{{ env_var('SNOWFLAKE_ACCOUNT') }}"
+      database: "{{ env_var('SNOWFLAKE_DATABASE') }}"
+      role: "{{ env_var('SNOWFLAKE_ROLE') }}"
+      schema: "{{ env_var('SNOWFLAKE_SCHEMA') }}"
+      threads: "{{ env_var('DBT_THREADS', 10) | int }}"
+      type: snowflake
+      user: "{{ env_var('SNOWFLAKE_USERNAME') }}"
+      warehouse: "{{ env_var('SNOWFLAKE_WAREHOUSE') }}"
+      # https://docs.getdbt.com/docs/core/connect-data-platform/snowflake-setup
+      retry_all: true # default: false
+      # retry_on_database_errors: true
+      connect_retries: 2 # 0 is the default
+      connect_timeout: 10 # 10 seconds is the default
+      reuse_connections: true # default: false (available v1.4+)
+      client_session_keep_alive: true
+    integration:
+      <<: *common
+      password: "{{ env_var('SNOWFLAKE_PASSWORD') }}"
+    local:
+      <<: *common
+      authenticator: externalbrowser
+      client_session_keep_alive: true
+      connect_retries: 3
+      connect_timeout: 5
