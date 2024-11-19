@@ -1,0 +1,7 @@
+version: 2
+
+models:
+  - name: &model_name some_new_model
+    config:
+      tags:
+        - *model_name

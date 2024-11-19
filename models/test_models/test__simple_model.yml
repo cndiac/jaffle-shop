@@ -9,5 +9,4 @@ models:
       - name: origin_system
         tags: [origin_system]
         data_tests:
-          - is_present:
-              artifact_section: current
+          - is_present
