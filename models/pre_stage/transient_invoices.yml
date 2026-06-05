@@ -1,0 +1,5 @@
+models:
+  - name: transient_invoices
+    config:
+      materialized: table
+      transient: true
