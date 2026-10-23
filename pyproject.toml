@@ -4,6 +4,7 @@ version = "0.1.0"
 description = ""
 authors = ["Cristian Diaconu"]
 readme = "README.md"
+packages = [{ include = "scripts" }]
 
 [tool.poetry.dependencies]
 python = "^3.9"
@@ -12,6 +13,9 @@ dbt-core = "1.8.3"
 dbt-semantic-interfaces = "0.5.1"
 dbt-adapters = "^1.3.2"
 dbt-extractor = "^0.5.1"
+
+[tool.poetry.scripts]
+dv4dbt-scenario = "scripts.run_dv4dbt_scenario:main"
 
 
 [build-system]

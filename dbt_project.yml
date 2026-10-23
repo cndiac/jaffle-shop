@@ -49,10 +49,11 @@ seeds:
 
 vars:
   ingestion_id: "1"
-  entity_source_models:
-    - scenario2a
-  entity_ingestion_load_type: FULL
-  entity_stage_materialization: table
-  entity_rdv_materialization: incremental
-  entity_source_is_single_batch: true
+  source_model: scenario2a
+  load_type: FULL
+  stage_entity_materialization: incremental
+  rdv_materialization: incremental
+  source_is_single_batch: true
+  use_partitioned_eff_sat: false
+  eff_sat_partition_by: origin_system
   datavault4dbt.copy_rsrc_ldts_input_columns: true

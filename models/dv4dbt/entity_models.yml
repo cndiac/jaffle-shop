@@ -1,28 +1,8 @@
 version: 2
 
 models:
-  - name: entity_source_union
-    description: Configurable union of entity scenario seeds.
-    columns:
-      - name: ingestion_id
-        data_tests:
-          - not_null
-      - name: ingestion_load_type
-        data_tests:
-          - not_null
-          - accepted_values:
-              values:
-                - FULL
-                - DELTA
-      - name: origin_system
-        data_tests:
-          - not_null
-      - name: origin_system_entity_id
-        data_tests:
-          - not_null
-
-  - name: entity_stage
-    description: Persisted datavault4dbt stage for the selected entity scenarios.
+  - name: stage_entity
+    description: Persisted unhashed stage for the selected entity scenarios.
     columns:
       - name: ingestion_id
         data_tests:
@@ -43,6 +23,13 @@ models:
       - name: origin_system
         data_tests:
           - not_null
+
+  - name: stage_entity_current_load
+    description: Current ingestion rows with datavault4dbt hashkey and hashdiff calculations.
+    columns:
+      - name: ingestion_id
+        data_tests:
+          - not_null
       - name: hk_entity_h
         data_tests:
           - not_null
@@ -50,10 +37,17 @@ models:
         data_tests:
           - not_null
 
-  - name: entity_current_ingestion
-    description: Rows from entity_stage restricted to the ingestion_id currently being processed.
+  - name: entity_hub
+    description: Entity Hub keyed by provider namespace and provider entity identifier.
     columns:
-      - name: ingestion_id
+      - name: hk_entity_h
+        data_tests:
+          - not_null
+          - unique
+      - name: origin_system
+        data_tests:
+          - not_null
+      - name: origin_system_entity_id
         data_tests:
           - not_null
 
@@ -63,7 +57,7 @@ models:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:
             - hk_entity_h
-            - ldts
+            - effective_from_date
     columns:
       - name: ingestion_id
         data_tests:
@@ -82,4 +76,4 @@ models:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:
             - hk_entity_h
-            - ldts
+            - effective_from_date
