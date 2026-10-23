@@ -88,6 +88,7 @@ local_dbt_runner.py
 run_dbt.py
 *.xlsx
 *.csv
+!seeds/dv4dbt/*.csv
 playground_options.json
 playground_options.yml
 .test_exports/

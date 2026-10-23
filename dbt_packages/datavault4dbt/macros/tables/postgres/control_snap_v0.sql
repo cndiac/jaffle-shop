@@ -1,0 +1,85 @@
+{%- macro postgres__control_snap_v0(start_date, daily_snapshot_time, sdts_alias, end_date=none) -%}
+
+{% if datavault4dbt.is_nothing(end_date) %}
+  {% set end_date = 'CURRENT_TIMESTAMP' %}
+{% else %}
+    {% set end_date = "'"~end_date~"'::timestamp + Interval '1 day' - Interval '1 microsecond'" %}
+{% endif %}
+{%- set timestamp_format = datavault4dbt.timestamp_format() -%}
+
+{%- if not datavault4dbt.is_something(sdts_alias) -%}
+    {%- set sdts_alias = var('datavault4dbt.sdts_alias', 'sdts') -%}
+{%- endif -%}
+
+{%- set first_day_of_week_var = datavault4dbt.first_day_of_week() -%}
+
+WITH
+
+initial_timestamps AS (
+    
+    SELECT
+        sdts::timestamp
+    FROM 
+        generate_series(timestamp '{{ start_date }} {{ daily_snapshot_time }}', {{ end_date }}, Interval '1 day') AS sdts(day)
+    {%- if is_incremental() %}
+    WHERE
+        sdts > (SELECT MAX({{ sdts_alias }}) FROM {{ this }})
+    {%- endif %}
+
+),
+
+enriched_timestamps AS (
+
+    SELECT
+        sdts as {{ sdts_alias }},
+        TRUE as force_active,
+        sdts as replacement_sdts,
+        CONCAT('Snapshot ', DATE(sdts)) as caption,
+        CASE
+            WHEN EXTRACT(MINUTE FROM sdts) = 0 AND EXTRACT(SECOND FROM sdts) = 0 THEN TRUE
+            ELSE FALSE
+        END as is_hourly,
+        CASE
+            WHEN EXTRACT(MINUTE FROM sdts) = 0 AND EXTRACT(SECOND FROM sdts) = 0 AND EXTRACT(HOUR FROM sdts) = 0 THEN TRUE
+            ELSE FALSE
+        END as is_daily,
+        CASE
+            WHEN EXTRACT(ISODOW FROM sdts) = {{ first_day_of_week_var }} THEN TRUE
+            ELSE FALSE
+        END AS is_beginning_of_week,
+        CASE
+            WHEN EXTRACT(ISODOW FROM sdts) = {{ ((first_day_of_week_var + 5) % 7) + 1 }} THEN TRUE
+            ELSE FALSE
+        END AS is_end_of_week,
+        CASE
+            WHEN EXTRACT(DAY FROM sdts) = 1 THEN TRUE
+            ELSE FALSE
+        END as is_beginning_of_month,
+        CASE 
+            WHEN EXTRACT(DAY FROM (sdts + INTERVAL '1 day')) = 1 THEN TRUE
+            ELSE FALSE
+        END AS is_end_of_month,
+        CASE 
+            WHEN EXTRACT(MONTH FROM sdts) IN (1, 4, 7, 10) AND EXTRACT(DAY FROM sdts) = 1 THEN TRUE
+            ELSE FALSE
+        END AS is_beginning_of_quarter,
+        CASE 
+            WHEN EXTRACT(MONTH FROM sdts) IN (3, 6, 9, 12) AND EXTRACT(DAY FROM (sdts + INTERVAL '1 day')) = 1 THEN TRUE
+            ELSE FALSE
+        END AS is_end_of_quarter, 
+        CASE
+            WHEN EXTRACT(DAY FROM sdts) = 1 AND EXTRACT(MONTH FROM sdts) = 1 THEN TRUE
+            ELSE FALSE
+        END as is_beginning_of_year,
+        CASE 
+            WHEN EXTRACT(MONTH FROM sdts) = 12 AND EXTRACT(DAY FROM sdts) = 31 THEN TRUE
+            ELSE FALSE
+        END AS is_end_of_year,
+        NULL as comment
+    FROM initial_timestamps
+
+)
+
+SELECT * FROM enriched_timestamps
+
+{%- endmacro -%}

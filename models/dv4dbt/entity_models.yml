@@ -1,0 +1,85 @@
+version: 2
+
+models:
+  - name: entity_source_union
+    description: Configurable union of entity scenario seeds.
+    columns:
+      - name: ingestion_id
+        data_tests:
+          - not_null
+      - name: ingestion_load_type
+        data_tests:
+          - not_null
+          - accepted_values:
+              values:
+                - FULL
+                - DELTA
+      - name: origin_system
+        data_tests:
+          - not_null
+      - name: origin_system_entity_id
+        data_tests:
+          - not_null
+
+  - name: entity_stage
+    description: Persisted datavault4dbt stage for the selected entity scenarios.
+    columns:
+      - name: ingestion_id
+        data_tests:
+          - not_null
+      - name: ingestion_load_type
+        data_tests:
+          - not_null
+          - accepted_values:
+              values:
+                - FULL
+                - DELTA
+      - name: effective_from_date
+        data_tests:
+          - not_null
+      - name: current_as_of_date
+        data_tests:
+          - not_null
+      - name: origin_system
+        data_tests:
+          - not_null
+      - name: hk_entity_h
+        data_tests:
+          - not_null
+      - name: hd_entity_s
+        data_tests:
+          - not_null
+
+  - name: entity_current_ingestion
+    description: Rows from entity_stage restricted to the ingestion_id currently being processed.
+    columns:
+      - name: ingestion_id
+        data_tests:
+          - not_null
+
+  - name: entity_sat_v0
+    description: Standard RDV Satellite; current_as_of_date is in its hashdiff to record reconfirmations.
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - hk_entity_h
+            - ldts
+    columns:
+      - name: ingestion_id
+        data_tests:
+          - not_null
+      - name: ingestion_load_type
+        data_tests:
+          - not_null
+          - accepted_values:
+              values:
+                - FULL
+                - DELTA
+
+  - name: entity_eff_sat_v0
+    description: Effectivity Satellite tracking presence and absence of entity hashkeys.
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - hk_entity_h
+            - ldts

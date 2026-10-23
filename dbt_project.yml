@@ -15,7 +15,7 @@ profile: 'default'
 model-paths: ["models"]
 analysis-paths: ["analysis"]
 test-paths: ["tests"]
-seed-paths: ["data"]
+seed-paths: ["seeds"]
 macro-paths: ["macros"]
 snapshot-paths: ["snapshots"]
 
@@ -33,6 +33,26 @@ models:
     stage:
       +tags:
         - stage
+    dv4dbt:
+      +tags:
+        - dv4dbt
+
+seeds:
+  jaffle_shop:
+    dv4dbt:
+      +column_types:
+        current_as_of_date: timestamp_ntz
+        is_deleted: boolean
+        origin_system: varchar
+        origin_system_entity_id: varchar
+        entity_name: varchar
 
 vars:
   ingestion_id: "ingestion_123"
+  entity_source_models:
+    - scenario1a
+  entity_ingestion_load_type: FULL
+  entity_stage_materialization: table
+  entity_rdv_materialization: incremental
+  entity_source_is_single_batch: true
+  datavault4dbt.copy_rsrc_ldts_input_columns: true
