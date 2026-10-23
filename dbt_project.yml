@@ -48,9 +48,9 @@ seeds:
         entity_name: varchar
 
 vars:
-  ingestion_id: "ingestion_123"
+  ingestion_id: "1"
   entity_source_models:
-    - scenario1a
+    - scenario2a
   entity_ingestion_load_type: FULL
   entity_stage_materialization: table
   entity_rdv_materialization: incremental

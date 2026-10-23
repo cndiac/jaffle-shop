@@ -31,13 +31,13 @@ three successive full snapshots. Run each command separately so
 `effective_from_date` records a distinct technical ingestion time:
 
 ```sh
-dbt build --select tag:dv4dbt --vars \
+dbt build --select +tag:dv4dbt --vars \
   '{ingestion_id: scenario1a, entity_source_models: [scenario1a], entity_ingestion_load_type: FULL, entity_stage_materialization: incremental, entity_rdv_materialization: incremental}'
 
-dbt build --select tag:dv4dbt --vars \
+dbt build --select +tag:dv4dbt --vars \
   '{ingestion_id: scenario1b, entity_source_models: [scenario1b], entity_ingestion_load_type: FULL, entity_stage_materialization: incremental, entity_rdv_materialization: incremental}'
 
-dbt build --select tag:dv4dbt --vars \
+dbt build --select +tag:dv4dbt --vars \
   '{ingestion_id: scenario1c, entity_source_models: [scenario1c], entity_ingestion_load_type: FULL, entity_stage_materialization: incremental, entity_rdv_materialization: incremental}'
 ```
 
@@ -51,7 +51,7 @@ standard Satellite also receives a reconfirmation row for each new
 To union providers into one logical snapshot, pass multiple scenario seeds:
 
 ```sh
-dbt build --select tag:dv4dbt --vars \
+dbt build --select +tag:dv4dbt --vars \
   '{ingestion_id: combined_scenario_a, entity_source_models: [scenario1a, scenario2a], entity_ingestion_load_type: FULL}'
 ```
 

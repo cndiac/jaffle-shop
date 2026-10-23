@@ -1,3 +1,4 @@
 current_as_of_date,is_deleted,origin_system,origin_system_entity_id,entity_name
-2026-01-02 00:00:00,false,provider_beta,2001,Beta Entity One Renamed
-2026-01-02 00:00:00,true,provider_beta,2002,Beta Entity Two
+2026-01-02 00:00:00,false,provider_beta,2001,Beta Entity One
+2026-01-02 00:00:00,false,provider_beta,2002,Beta Entity Two
+2026-01-02 00:00:00,false,provider_beta,2003,Beta Entity Three
