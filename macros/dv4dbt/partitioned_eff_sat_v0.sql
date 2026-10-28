@@ -69,8 +69,9 @@ source_status_changes as (
         on current_state.{{ partition_by }} = source.{{ partition_by }}
         and current_state.{{ tracked_hashkey }} = source.{{ tracked_hashkey }}
     where current_state.{{ tracked_hashkey }} is null
-       or current_state.is_active != not coalesce(
-           source.{{ is_deleted_column }}, false
+       or current_state.is_active != cast(
+           not coalesce(source.{{ is_deleted_column }}, false)
+           as boolean
        )
     {% endif %}
 ),
